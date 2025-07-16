@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        PYTHONPATH = "${WORKSPACE}"
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -15,16 +19,18 @@ pipeline {
         }
 
         stage('Deploy') {
+            when {
+                expression {
+                    return currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
             steps {
-                echo 'Deploying to staging environment...'
+                echo 'Deploying...'
             }
         }
     }
 
     post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
         failure {
             echo 'Pipeline failed!'
         }

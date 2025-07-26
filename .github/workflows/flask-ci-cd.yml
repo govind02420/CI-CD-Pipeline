@@ -1,0 +1,55 @@
+name: Flask CI/CD Pipeline
+
+on:
+  push:
+    branches: [ staging, main ]
+  pull_request:
+    branches: [ staging, main ]
+  release:
+    types: [created]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest
+
+  deploy-staging:
+    needs: build-test
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging..."
+          # Add your real staging deployment script here
+        env:
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+
+  deploy-prod:
+    needs: build-test
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production..."
+          # Add your production deployment command/script here
+        env:
+          PROD_API_KEY: ${{ secrets.PROD_API_KEY }}

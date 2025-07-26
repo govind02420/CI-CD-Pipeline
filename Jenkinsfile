@@ -2,33 +2,30 @@ pipeline {
     agent any
 
     environment {
-        APP_ENV = 'development'
+        PYTHONPATH = "${WORKSPACE}"
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/govind02420/CI-CD-Pipeline.git'
-            }
-        }
-
         stage('Build') {
             steps {
-                bat 'python -m pip install --upgrade pip'
-                bat 'python -m pip install -r requirements.txt'
+                bat '"C:/Users/govin/AppData/Local/Programs/Python/Python313/Scripts/pip.exe" install -r requirements.txt'
             }
         }
 
         stage('Test') {
             steps {
-                bat 'pytest > test-report.txt || exit 0'
+                bat '"C:/Users/govin/AppData/Local/Programs/Python/Python313/Scripts/pytest.exe"'
             }
         }
 
         stage('Deploy') {
+            when {
+                expression {
+                    return currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
             steps {
-                echo 'Deploying Flask app...'
-                bat 'python app.py'
+                echo 'Deploying...'
             }
         }
     }
@@ -39,6 +36,7 @@ pipeline {
                  subject: "✅ Jenkins Build Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "Great! The build succeeded.\n\nSee details at ${env.BUILD_URL}"
         }
+
         failure {
             mail to: 'govind.02420@gmail.com',          // yourname@gmail.com
                  subject: "❌ Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",

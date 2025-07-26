@@ -10,6 +10,3 @@ def home():
 if __name__ == '__main__':
     app.run(debug=True)
 
-# Test function (can be discovered by pytest)
-def test_math():
-    assert 1 + 1 == 2

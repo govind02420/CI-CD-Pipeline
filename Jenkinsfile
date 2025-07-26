@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/govind02420/CI-CD-Pipeline.git'
+                git branch: 'main', url: 'https://github.com/govind02420/CI-CD-Pipeline.git'
             }
         }
 

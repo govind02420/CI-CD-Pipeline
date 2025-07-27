@@ -8,15 +8,15 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'python3 -m venv $VENV_DIR'
-                sh './$VENV_DIR/bin/pip install -r requirements.txt'
+                bat 'python -m venv %VENV_DIR%'
+                bat '%VENV_DIR%\\Scripts\\pip install -r requirements.txt'
             }
         }
 
         stage('Test') {
             steps {
-                sh './$VENV_DIR/bin/pip install pytest'
-                sh './$VENV_DIR/bin/pytest tests'
+                bat '%VENV_DIR%\\Scripts\\pip install pytest'
+                bat '%VENV_DIR%\\Scripts\\pytest tests'
             }
         }
 
@@ -25,8 +25,8 @@ pipeline {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                sh 'echo "Deploying to staging environment..."'
-                // Add your deploy command here
+                bat 'echo Deploying to staging environment...'
+                // Add your Windows deploy script here
             }
         }
     }

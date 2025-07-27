@@ -2,33 +2,33 @@ pipeline {
     agent any
 
     environment {
-        PYTHONPATH = "${WORKSPACE}"
+        VENV_DIR = 'venv'
     }
 
     stages {
         stage('Build') {
             steps {
-                bat '"C:/Users/govin/AppData/Local/Programs/Python/Python313/Scripts/pip.exe" install -r requirements.txt'
+                sh 'python3 -m venv $VENV_DIR'
+                sh './$VENV_DIR/bin/pip install -r requirements.txt'
             }
         }
 
         stage('Test') {
             steps {
-                bat '"C:/Users/govin/AppData/Local/Programs/Python/Python313/Scripts/pytest.exe"'
+                sh './$VENV_DIR/bin/pip install pytest'
+                sh './$VENV_DIR/bin/pytest tests'
             }
         }
 
         stage('Deploy') {
             when {
-                expression {
-                    return currentBuild.result == null || currentBuild.result == 'SUCCESS'
-                }
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo 'Deploying...'
+                sh 'echo "Deploying to staging environment..."'
+                // Add your deploy command here
             }
         }
-    }
 
     post {
         success {
